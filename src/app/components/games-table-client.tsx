@@ -3,6 +3,8 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { GamesTable } from "./games-table";
+import { deleteGameAction } from "@/app/actions/game.actions";
+import { toast } from "sonner";
 
 export default function GamesTableClient({
   games,
@@ -14,14 +16,20 @@ export default function GamesTableClient({
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
+  const url = new URL(window.location.toString());
+
   const onPageChange = (page: number) => {
-    const url = new URL(window.location.toString());
     url.searchParams.set("page", String(page));
     startTransition(() => router.push(url.pathname + url.search));
   };
 
+  const onDeleteGame = async (id: string) => {
+    await deleteGameAction(id);
+    toast.success("Game deleted successfully");
+    startTransition(() => router.push(url.pathname + url.search));
+  };
+
   const onSort = (column: string) => {
-    const url = new URL(window.location.toString());
     const current = searchParams.get("sortBy");
     const currentOrder = searchParams.get("sortOrder") || "desc";
     let nextOrder = "asc";
@@ -39,6 +47,7 @@ export default function GamesTableClient({
       pagination={pagination}
       onSort={onSort}
       onPageChange={onPageChange}
+      onDeleteGame={onDeleteGame}
       sortBy={sortBy}
       sortOrder={sortOrder}
       isLoading={isPending}

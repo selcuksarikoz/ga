@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
 import {
@@ -66,6 +66,7 @@ export default function FilterContent({
       scoreMin: 0,
       scoreMax: 100,
     });
+    redirect("/dashboard");
   };
 
   const activeFiltersCount = [

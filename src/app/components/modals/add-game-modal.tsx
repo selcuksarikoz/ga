@@ -24,6 +24,7 @@ import { Genre } from "@prisma/client";
 import { createGameAction } from "@/app/actions/game.actions";
 import { createDeveloperAction } from "@/app/actions/developer.actions";
 import { Plus, X } from "lucide-react";
+import { toast } from "sonner";
 
 const gameSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -108,6 +109,7 @@ export function AddGameModal() {
     if (result.success) {
       setErrors({});
       await createGameAction(result.data);
+      toast.success("Game added successfully");
       closeModal();
     } else {
       const newErrors: Record<string, string> = {};

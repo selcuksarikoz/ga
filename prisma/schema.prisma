@@ -87,7 +87,6 @@ model Game {
     id          String    @id @default(auto()) @map("_id") @db.ObjectId
     title       String
     genre       Genre     @default(ADVENTURE)
-    releaseDate DateTime
     developer   Developer @relation("DeveloperGames", fields: [developerId], references: [id])
     developerId String    @db.ObjectId
 

@@ -21,11 +21,25 @@ export async function createGameAction(formData: {
   try {
     await caller.game.create({
       ...formData,
-      releaseDate: new Date(formData.releaseYear, 0, 1),
+      releaseYear: new Date(formData.releaseYear, 0, 1),
     });
     // Revalidate the dashboard path to refresh the game list.
     revalidatePath("/dashboard");
   } catch (error) {
     return { error: "Failed to create game." };
+  }
+}
+
+/**
+ * Server Action to delete a game.
+ * @param id The ID of the game to delete.
+ */
+export async function deleteGameAction(id: string) {
+  try {
+    await caller.game.delete({ id });
+    revalidatePath("/dashboard");
+    return { message: "Game deleted successfully." };
+  } catch (error) {
+    return { message: "Failed to delete game." };
   }
 }

@@ -201,7 +201,7 @@ export const gameRouter = createTRPCRouter({
       z.object({
         title: z.string(),
         genre: z.nativeEnum(Genre),
-        releaseDate: z.date(),
+        releaseYear: z.date(),
         developerId: z.string(),
         price: z.number(),
         score: z.number(),
@@ -213,12 +213,23 @@ export const gameRouter = createTRPCRouter({
       const game = await ctx.db.game.create({
         data: {
           ...input,
-          releaseYear: input.releaseDate.getFullYear(),
+          releaseYear: input.releaseYear.getFullYear(),
         },
       });
       return game;
     }),
   // create a game done
+
+  // delete a game
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      await ctx.db.game.delete({
+        where: { id: input.id },
+      });
+      return { success: true };
+    }),
+  // delete a game done
 });
 
 export default gameRouter;

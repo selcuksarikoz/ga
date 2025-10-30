@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { Badge } from "@/app/components/ui/badge";
+import { Button } from "@/app/components/ui/button";
+import Loading from "@/app/components/ui/loading";
 import {
   Table,
   TableBody,
@@ -10,12 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/components/ui/table";
-import { Badge } from "@/app/components/ui/badge";
-import { Button } from "@/app/components/ui/button";
-import { ArrowUpDown } from "lucide-react";
-import { PaginationClient } from "./pagination-client";
 import { cn } from "@/lib/utils";
-import Loading from "@/app/components/ui/loading";
+import { ArrowUpDown, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { PaginationClient } from "./pagination-client";
 
 interface Game {
   id: string;
@@ -40,6 +39,7 @@ interface GamesTableProps {
   };
   onSort: (column: string) => void;
   onPageChange: (page: number) => void;
+  onDeleteGame: (id: string) => void;
   sortBy: string;
   sortOrder: "asc" | "desc";
   isLoading?: boolean;
@@ -84,6 +84,7 @@ export function GamesTable({
   pagination,
   onSort,
   onPageChange,
+  onDeleteGame,
   sortBy,
   sortOrder,
   isLoading = false,
@@ -103,7 +104,7 @@ export function GamesTable({
         </div>
       )}
 
-      <div className="overflow-auto rounded-md border">
+      <div className="h-[calc(100vh-140px)] overflow-auto rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -167,7 +168,7 @@ export function GamesTable({
           <TableBody>
             {games.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
+                <TableCell colSpan={8} className="h-24 text-center">
                   No games found.
                 </TableCell>
               </TableRow>
@@ -207,6 +208,12 @@ export function GamesTable({
                         </Badge>
                       ))}
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    <Trash2
+                      className="h-5 w-5 cursor-pointer text-red-600 hover:text-red-800"
+                      onClick={() => onDeleteGame(game.id)}
+                    />
                   </TableCell>
                 </TableRow>
               ))

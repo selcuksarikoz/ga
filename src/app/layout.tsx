@@ -6,6 +6,7 @@ import { Geist } from "next/font/google";
 import clsx from "clsx";
 import { TRPCReactProvider } from "@/trpc/react";
 import { ModalProvider } from "@/components/modal-provider";
+import { Toaster } from "@/components/ui/sonner";
 import { ModalRenderer } from "./components/modal-renderer";
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default function RootLayout({
         <TRPCReactProvider>
           <ModalProvider>
             {children}
+            <Toaster />
             <ModalRenderer />
           </ModalProvider>
         </TRPCReactProvider>
