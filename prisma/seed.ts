@@ -1,12 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import type { Genre as PrismaGenre } from "@prisma/client";
-
 const prisma = new PrismaClient();
-
-function pick<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
 const developers = [
   "Rockstar Games",
   "CD Projekt Red",
@@ -193,7 +186,9 @@ function generateGameTitle(): string {
     return `${word1} ${word2}`;
   } else if (rand < 0.85) {
     // Word only
-    return gameTitleWords[Math.floor(Math.random() * gameTitleWords.length)];
+    return gameTitleWords[
+      Math.floor(Math.random() * gameTitleWords.length)
+    ] as string;
   } else {
     // Word + Suffix
     const word =
@@ -210,7 +205,7 @@ function getRandomPlatforms(): string {
   const shuffled = [...platforms].sort(() => Math.random() - 0.5);
 
   for (let i = 0; i < numPlatforms; i++) {
-    selectedPlatforms.push(shuffled[i]);
+    selectedPlatforms.push(shuffled[i]!);
   }
 
   return selectedPlatforms.join(",");
@@ -220,7 +215,7 @@ function generatePrice(): number {
   const pricePoints = [
     0, 4.99, 9.99, 14.99, 19.99, 29.99, 39.99, 49.99, 59.99, 69.99,
   ];
-  return pricePoints[Math.floor(Math.random() * pricePoints.length)];
+  return pricePoints[Math.floor(Math.random() * pricePoints.length)] as any;
 }
 
 function generateScore(): number {

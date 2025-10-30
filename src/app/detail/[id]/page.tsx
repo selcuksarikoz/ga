@@ -9,11 +9,8 @@ import {
 } from "@/app/components/ui/card";
 import { notFound } from "next/navigation";
 
-export default async function GameDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function GameDetailPage(props: { params: any }) {
+  const params = await props.params;
   const game = await caller.game.get({ id: params.id });
 
   if (!game) {

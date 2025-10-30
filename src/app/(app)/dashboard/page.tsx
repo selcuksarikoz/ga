@@ -4,11 +4,14 @@ import GamesTableClient from "@/app/components/games-table-client";
 import { caller } from "@/trpc/server";
 import { Genre } from "@prisma/client";
 
-type Props = {
-  searchParams: Record<string, string | string[] | undefined>;
-};
+// type PageProps = {
+//   searchParams: { [key: string]: string | string[] | undefined };
+// Types of property 'searchParams' are incompatible.
+// };
 
-export default async function DashboardPage({ searchParams }: Props) {
+export default async function DashboardPage(props: { searchParams: any }) {
+  const searchParams = await props.searchParams;
+
   // read search params for server-side filters/pagination
   const page = Number(searchParams.page ?? 1);
   const limit = Number(searchParams.limit ?? 20);

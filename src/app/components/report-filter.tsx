@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { z } from "zod";
+import { Button } from "@/app/components/ui/button";
+import { Label } from "@/app/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -9,10 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/components/ui/select";
-import { Button } from "@/app/components/ui/button";
-import { Label } from "@/app/components/ui/label";
-import { Separator } from "@/app/components/ui/separator";
-import clsx from "clsx";
+import { useEffect, useState } from "react";
+import { z } from "zod";
 
 interface ReportFilterProps {
   initialYearA?: number;
@@ -37,7 +35,6 @@ export function ReportFilter({
   initialYearB,
   onSubmit,
   buttonLabel,
-  className,
 }: ReportFilterProps) {
   const [yearA, setYearA] = useState<number | undefined>(initialYearA);
   const [yearB, setYearB] = useState<number | undefined>(initialYearB);
