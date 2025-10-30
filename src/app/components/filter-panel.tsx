@@ -20,6 +20,14 @@ import { Button } from "@/app/components/ui/button";
 import { Badge } from "@/app/components/ui/badge";
 import { Search, X, Filter } from "lucide-react";
 import { Separator } from "@/app/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/app/components/ui/dialog";
 
 export interface Filters {
   search: string;
@@ -82,8 +90,8 @@ export function FilterPanel({
     filters.platform,
   ].filter(Boolean).length;
 
-  return (
-    <Card>
+  const FilterContent = (
+    <>
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -186,7 +194,7 @@ export function FilterPanel({
 
         <Separator />
 
-        <div className="space-y-2">
+        <div className="space-y-4">
           <Label>
             Release Year: {filters.yearMin} - {filters.yearMax}
           </Label>
@@ -237,6 +245,39 @@ export function FilterPanel({
           />
         </div>
       </CardContent>
-    </Card>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop / tablet: sticky card */}
+      <div className="hidden md:block">
+        <Card className="sticky top-4">{FilterContent}</Card>
+      </div>
+
+      {/* Mobile: floating filter button that opens a dialog */}
+      <div className="md:hidden">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="fixed right-6 bottom-6 z-50 rounded-full p-3 shadow-lg">
+              <Filter className="h-5 w-5" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="w-full max-w-lg p-4">
+            <DialogHeader>
+              <DialogTitle>Filters</DialogTitle>
+              <DialogClose asChild>
+                <Button variant="ghost" className="ml-auto">
+                  Close
+                </Button>
+              </DialogClose>
+            </DialogHeader>
+            <div className="mt-2">
+              <Card>{FilterContent}</Card>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </>
   );
 }

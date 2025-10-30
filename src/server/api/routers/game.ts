@@ -14,6 +14,7 @@ export const gameRouter = createTRPCRouter({
       });
       return game;
     }),
+  // get a game by id done
   // list games with filters and pagination
   list: publicProcedure
     .input(
@@ -94,6 +95,7 @@ export const gameRouter = createTRPCRouter({
         },
       };
     }),
+  // list games with filters and pagination done
 });
 
 export default gameRouter;

@@ -10,6 +10,17 @@ export default async function DashboardPage({ searchParams }: Props) {
   // read search params for server-side filters/pagination
   const page = Number(searchParams.page ?? 1);
   const limit = Number(searchParams.limit ?? 20);
+  const rawSortBy =
+    typeof searchParams.sortBy === "string" ? searchParams.sortBy : undefined;
+  const sortBy = (
+    ["title", "releaseYear", "price", "score", "createdAt"] as const
+  ).includes(rawSortBy as any)
+    ? (rawSortBy as "title" | "releaseYear" | "price" | "score" | "createdAt")
+    : undefined;
+  const sortOrder =
+    typeof searchParams.sortOrder === "string"
+      ? (searchParams.sortOrder as "asc" | "desc")
+      : undefined;
 
   const developerId =
     typeof searchParams.developerId === "string"
@@ -36,6 +47,8 @@ export default async function DashboardPage({ searchParams }: Props) {
     releaseYear,
     priceMin,
     priceMax,
+    sortBy,
+    sortOrder,
   });
 
   // server-side console log for debugging
@@ -69,8 +82,8 @@ export default async function DashboardPage({ searchParams }: Props) {
           <GamesTableClient
             games={games}
             pagination={res.pagination}
-            sortBy="title"
-            sortOrder="asc"
+            sortBy={sortBy ?? "title"}
+            sortOrder={sortOrder ?? "asc"}
           />
         </div>
       </div>

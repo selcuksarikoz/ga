@@ -13,6 +13,7 @@ import { Badge } from "@/app/components/ui/badge";
 import { Button } from "@/app/components/ui/button";
 import { ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Loading from "@/app/components/ui/loading";
 
 interface Game {
   id: string;
@@ -39,6 +40,7 @@ interface GamesTableProps {
   onPageChange: (page: number) => void;
   sortBy: string;
   sortOrder: "asc" | "desc";
+  isLoading?: boolean;
 }
 
 interface SortButtonProps {
@@ -82,15 +84,22 @@ export function GamesTable({
   onPageChange,
   sortBy,
   sortOrder,
+  isLoading = false,
 }: GamesTableProps) {
   const getScoreColor = (score: number) => {
     if (score >= 80) return "text-green-600";
     if (score >= 60) return "text-yellow-600";
     return "text-red-600";
   };
-
   return (
-    <div className="space-y-4">
+    <div className="relative overflow-hidden rounded-md">
+      {/* Overlay covers both the table and pagination and is centered */}
+      {isLoading && (
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-white/50 backdrop-blur-sm">
+          <Loading />
+        </div>
+      )}
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
