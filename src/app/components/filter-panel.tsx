@@ -24,7 +24,7 @@ import { Separator } from "@/app/components/ui/separator";
 export interface Filters {
   search: string;
   genre: string;
-  developer: string;
+  developer: string; // developer id
   yearMin: number;
   yearMax: number;
   priceMin: number;
@@ -34,11 +34,16 @@ export interface Filters {
   platform: string;
 }
 
+interface DeveloperOption {
+  id: string;
+  name: string;
+}
+
 interface FilterPanelProps {
   filters: Filters;
   onFiltersChange: (filters: Filters) => void;
   genres: string[];
-  developers: string[];
+  developers: DeveloperOption[];
   platforms: string[];
 }
 
@@ -51,7 +56,7 @@ export function FilterPanel({
 }: FilterPanelProps) {
   const ALL_OPTION = "all";
 
-  const updateFilter = (key: keyof Filters, value: any) => {
+  const updateFilter = (key: keyof Filters, value: string | number) => {
     onFiltersChange({ ...filters, [key]: value });
   };
 
@@ -117,7 +122,7 @@ export function FilterPanel({
           <Label>Genre</Label>
           <Select
             value={filters.genre || ALL_OPTION}
-            onValueChange={(v) =>
+            onValueChange={(v: string) =>
               updateFilter("genre", v === ALL_OPTION ? "" : v)
             }
           >
@@ -139,7 +144,7 @@ export function FilterPanel({
           <Label>Developer</Label>
           <Select
             value={filters.developer || ALL_OPTION}
-            onValueChange={(v) =>
+            onValueChange={(v: string) =>
               updateFilter("developer", v === ALL_OPTION ? "" : v)
             }
           >
@@ -149,8 +154,8 @@ export function FilterPanel({
             <SelectContent>
               <SelectItem value={ALL_OPTION}>All developers</SelectItem>
               {developers.map((dev) => (
-                <SelectItem key={dev} value={dev}>
-                  {dev}
+                <SelectItem key={dev.id} value={dev.id}>
+                  {dev.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -161,7 +166,7 @@ export function FilterPanel({
           <Label>Platform</Label>
           <Select
             value={filters.platform || ALL_OPTION}
-            onValueChange={(v) =>
+            onValueChange={(v: string) =>
               updateFilter("platform", v === ALL_OPTION ? "" : v)
             }
           >
@@ -190,7 +195,7 @@ export function FilterPanel({
             max={2024}
             step={1}
             value={[filters.yearMin, filters.yearMax]}
-            onValueChange={([min, max]) => {
+            onValueChange={([min, max]: [number, number]) => {
               updateFilter("yearMin", min);
               updateFilter("yearMax", max);
             }}
@@ -207,7 +212,7 @@ export function FilterPanel({
             max={70}
             step={5}
             value={[filters.priceMin, filters.priceMax]}
-            onValueChange={([min, max]) => {
+            onValueChange={([min, max]: [number, number]) => {
               updateFilter("priceMin", min);
               updateFilter("priceMax", max);
             }}
@@ -224,7 +229,7 @@ export function FilterPanel({
             max={100}
             step={5}
             value={[filters.scoreMin, filters.scoreMax]}
-            onValueChange={([min, max]) => {
+            onValueChange={([min, max]: [number, number]) => {
               updateFilter("scoreMin", min);
               updateFilter("scoreMax", max);
             }}

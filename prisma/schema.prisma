@@ -87,7 +87,7 @@ model Game {
     id          String    @id @default(auto()) @map("_id") @db.ObjectId
     title       String
     genre       Genre     @default(ADVENTURE)
-    releaseDate DateTime?
+    releaseDate DateTime
     developer   Developer @relation("DeveloperGames", fields: [developerId], references: [id])
     developerId String    @db.ObjectId
 
@@ -95,7 +95,7 @@ model Game {
     price       Float
     score       Float
     platforms   String // Stored as comma-separated values
-    description String?
+    description String
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
 

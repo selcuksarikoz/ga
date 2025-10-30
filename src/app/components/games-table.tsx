@@ -15,7 +15,7 @@ import { ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Game {
-  id: number;
+  id: string;
   title: string;
   genre: string;
   releaseYear: number;
