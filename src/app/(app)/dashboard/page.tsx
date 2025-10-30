@@ -1,8 +1,8 @@
-import { caller } from "@/trpc/server";
+import { ActionButtons } from "@/app/components/action-buttons";
 import FiltersClient from "@/app/components/filters-client";
 import GamesTableClient from "@/app/components/games-table-client";
-import { Prisma, Genre } from "@prisma/client";
-import { ActionButtons } from "@/app/components/action-buttons";
+import { caller } from "@/trpc/server";
+import { Genre } from "@prisma/client";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -80,19 +80,6 @@ export default async function DashboardPage({ searchParams }: Props) {
   console.log("[dashboard] games.list result:", res);
 
   const games = res?.games ?? [];
-
-  // Build a minimal filters object for the FilterPanel
-  const filters = {
-    search: "",
-    genre: "",
-    developer: developerId ?? "",
-    yearMin: releaseYear ?? 2010,
-    yearMax: releaseYear ?? new Date().getFullYear(),
-    priceMin: priceMin ?? 0,
-    priceMax: priceMax ?? 100,
-    scoreMin: 0,
-    scoreMax: 100,
-  };
 
   // derive genres from Prisma enum so the list always matches the schema
   const genres = Object.values(Genre);

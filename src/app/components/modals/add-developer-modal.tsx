@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useModal } from "@/components/modal-provider";
-import { api } from "@/trpc/react";
 import {
   Dialog,
   DialogContent,
@@ -11,22 +10,19 @@ import {
 } from "@/app/components/ui/dialog";
 import { Input } from "@/app/components/ui/input";
 import { Button } from "@/app/components/ui/button";
+import { createJustDeveloperAction } from "@/app/actions/developer.actions";
 import { Label } from "@/app/components/ui/label";
 
 export function AddDeveloperModal() {
   const { isOpen, closeModal } = useModal();
   const [name, setName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const utils = api.useUtils();
-  const createDeveloper = api.developers.create.useMutation({
-    onSuccess: () => {
-      utils.developers.list.refetch();
-      closeModal();
-    },
-  });
-
-  const handleSubmit = () => {
-    createDeveloper.mutate({ name });
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    await createJustDeveloperAction(name);
+    setIsSubmitting(false);
+    closeModal();
   };
 
   return (
@@ -44,8 +40,8 @@ export function AddDeveloperModal() {
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-          <Button onClick={handleSubmit} disabled={createDeveloper.isPending}>
-            {createDeveloper.isPending ? "Adding..." : "Add Developer"}
+          <Button onClick={handleSubmit} disabled={isSubmitting || !name}>
+            {isSubmitting ? "Adding..." : "Add Developer"}
           </Button>
         </div>
       </DialogContent>

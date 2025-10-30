@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   Table,
   TableBody,
@@ -173,7 +174,14 @@ export function GamesTable({
             ) : (
               games.map((game) => (
                 <TableRow key={game.id}>
-                  <TableCell className="font-medium">{game.title}</TableCell>
+                  <TableCell className="font-medium">
+                    <Link
+                      href={`/detail/${game.id}`}
+                      className="hover:underline"
+                    >
+                      {game.title}
+                    </Link>
+                  </TableCell>
                   <TableCell>{game.developer.name}</TableCell>
                   <TableCell>
                     <Badge variant="outline">{game.genre}</Badge>

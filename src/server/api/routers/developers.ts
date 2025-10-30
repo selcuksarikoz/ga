@@ -6,6 +6,7 @@ export const developersRouter = createTRPCRouter({
   list: protectedProcedure.query(async ({ ctx }) => {
     const devs = await ctx.db.developer.findMany({
       select: { id: true, name: true },
+      orderBy: { name: "desc" },
     });
     return devs.map((d) => ({ id: d.id, name: d.name }));
   }),

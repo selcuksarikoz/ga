@@ -1,5 +1,13 @@
 import React from "react";
 import { caller } from "@/trpc/server";
+import { Badge } from "@/app/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/card";
+import { notFound } from "next/navigation";
 
 export default async function GameDetailPage({
   params,
@@ -8,29 +16,48 @@ export default async function GameDetailPage({
 }) {
   const game = await caller.game.get({ id: params.id });
 
-  if (!game) return <div className="p-6">Game not found</div>;
+  if (!game) {
+    notFound();
+  }
 
   return (
-    <main className="p-6">
-      <div className="max-w-3xl">
-        <h1 className="mb-2 text-2xl font-bold">{game.title}</h1>
-        <p className="text-muted-foreground mb-4 text-sm">
-          By {game.developer?.name ?? "Unknown"} • {game.releaseYear}
-        </p>
-        <div className="rounded-lg border bg-white p-4">
-          <p className="mb-2">{game.description}</p>
-          <p className="text-muted-foreground text-sm">
-            Platforms: {game.platforms}
-          </p>
-          <p className="text-muted-foreground text-sm">
-            Price: $
-            {typeof game.price === "number"
-              ? game.price.toFixed(2)
-              : game.price}
-          </p>
-          <p className="text-muted-foreground text-sm">Score: {game.score}</p>
-        </div>
-      </div>
-    </main>
+    <div className="container mx-auto p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>{game.title}</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <div>
+            <strong>Developer:</strong> {game.developer.name}
+          </div>
+          <div>
+            <strong>Genre:</strong> <Badge>{game.genre}</Badge>
+          </div>
+          <div>
+            <strong>Release Year:</strong> {game.releaseYear}
+          </div>
+          <div>
+            <strong>Price:</strong> ${game.price.toFixed(2)}
+          </div>
+          <div>
+            <strong>Score:</strong> {game.score}
+          </div>
+          <div>
+            <strong>Platforms:</strong>
+            <div className="flex flex-wrap gap-2">
+              {game.platforms.split(",").map((platform) => (
+                <Badge key={platform} variant="secondary">
+                  {platform.trim()}
+                </Badge>
+              ))}
+            </div>
+          </div>
+          <div>
+            <strong>Description:</strong>
+            <p>{game.description}</p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

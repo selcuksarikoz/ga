@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Prisma, Genre } from "@prisma/client";
+import { type Prisma, Genre } from "@prisma/client";
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
@@ -122,12 +122,11 @@ export const gameRouter = createTRPCRouter({
 
       const total = await ctx.db.game.count({ where });
 
-      let orderBy: Prisma.GameOrderByWithRelationInput = { createdAt: "desc" };
-      if (sortBy) {
-        const dir = sortOrder === "asc" ? "asc" : "desc";
-        if (sortBy === "createdAt") orderBy = { createdAt: dir };
-        else orderBy = { [sortBy]: dir } as Prisma.GameOrderByWithRelationInput;
-      }
+      const sortDir = sortOrder ?? "desc";
+      const sortColumn = sortBy ?? "createdAt";
+      const orderBy: Prisma.GameOrderByWithRelationInput = {
+        [sortColumn]: sortDir,
+      };
 
       const games = await ctx.db.game.findMany({
         where,

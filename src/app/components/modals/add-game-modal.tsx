@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useModal } from "@/components/modal-provider";
 import { api } from "@/trpc/react";
 import { z } from "zod";
@@ -21,6 +21,9 @@ import {
   SelectValue,
 } from "@/app/components/ui/select";
 import { Genre } from "@prisma/client";
+import { createGameAction } from "@/app/actions/game.actions";
+import { createDeveloperAction } from "@/app/actions/developer.actions";
+import { Plus, X } from "lucide-react";
 
 const gameSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -40,7 +43,7 @@ export function AddGameModal() {
   const { isOpen, closeModal } = useModal();
   const [formData, setFormData] = useState({
     title: "",
-    genre: Genre.ACTION,
+    genre: Genre.ADVENTURE, // default genre is ADVENTURE in prisma schema
     releaseYear: new Date().getFullYear(),
     developerId: "",
     price: "",
@@ -48,28 +51,37 @@ export function AddGameModal() {
     platforms: "",
     description: "",
   });
+
+  const [isFormValid, setIsFormValid] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isAddingDeveloper, setIsAddingDeveloper] = useState(false);
+  const [newDeveloperName, setNewDeveloperName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    // Validate all fields except developerId initially
+    const partialSchema = gameSchema.omit({ developerId: true });
+    const result = partialSchema.safeParse(formData);
+
+    // Check developerId logic separately
+    const isDeveloperValid = isAddingDeveloper
+      ? !!newDeveloperName
+      : !!formData.developerId;
+
+    setIsFormValid(result.success && isDeveloperValid);
+  }, [formData, isAddingDeveloper, newDeveloperName]);
 
   const { data: developers } = api.developers.list.useQuery();
-  const utils = api.useUtils();
-  const createGame = api.game.create.useMutation({
-    onSuccess: () => {
-      utils.game.list.refetch();
-      closeModal();
-    },
-  });
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Handle numeric inputs separately to allow empty string
-  const handleNumericChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (/^\d*\.?\d*$/.test(value)) {
+    const { name, value, type } = e.target;
+    if (type === "number") {
+      if (/^\d*\.?\d*$/.test(value)) {
+        setFormData((prev) => ({ ...prev, [name]: value }));
+      }
+    } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
@@ -78,14 +90,25 @@ export function AddGameModal() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
-    const result = gameSchema.safeParse(formData);
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    let developerId = formData.developerId;
+
+    if (isAddingDeveloper && newDeveloperName) {
+      const result = await createDeveloperAction(newDeveloperName);
+      if (result.error || !result.data) {
+        setErrors((prev) => ({ ...prev, newDeveloper: result.error }));
+        setIsSubmitting(false);
+        return;
+      }
+      developerId = result.data.id;
+    }
+
+    const result = gameSchema.safeParse({ ...formData, developerId });
     if (result.success) {
       setErrors({});
-      createGame.mutate({
-        ...result.data,
-        releaseDate: new Date(result.data.releaseYear, 0, 1),
-      });
+      await createGameAction(result.data);
+      closeModal();
     } else {
       const newErrors: Record<string, string> = {};
       result.error.errors.forEach((err) => {
@@ -95,6 +118,7 @@ export function AddGameModal() {
       });
       setErrors(newErrors);
     }
+    setIsSubmitting(false);
   };
 
   return (
@@ -168,26 +192,61 @@ export function AddGameModal() {
           </div>
           <div>
             <Label htmlFor="developerId">Developer</Label>
-            <Select
-              name="developerId"
-              onValueChange={(value) =>
-                handleSelectChange("developerId", value)
-              }
-              value={formData.developerId}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select developer" />
-              </SelectTrigger>
-              <SelectContent>
-                {developers?.map((dev) => (
-                  <SelectItem key={dev.id} value={dev.id}>
-                    {dev.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {isAddingDeveloper ? (
+              <div className="flex items-center gap-2">
+                <Input
+                  id="newDeveloperName"
+                  name="newDeveloperName"
+                  placeholder="New Developer Name"
+                  value={newDeveloperName}
+                  onChange={(e) => setNewDeveloperName(e.target.value)}
+                  autoFocus
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setIsAddingDeveloper(false);
+                    setNewDeveloperName("");
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Select
+                  name="developerId"
+                  onValueChange={(value) =>
+                    handleSelectChange("developerId", value)
+                  }
+                  value={formData.developerId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select developer" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {developers?.map((dev) => (
+                      <SelectItem key={dev.id} value={dev.id}>
+                        {dev.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsAddingDeveloper(true)}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
             {errors.developerId && (
               <p className="text-sm text-red-500">{errors.developerId}</p>
+            )}
+            {errors.newDeveloper && (
+              <p className="text-sm text-red-500">{errors.newDeveloper}</p>
             )}
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -196,9 +255,9 @@ export function AddGameModal() {
               <Input
                 id="price"
                 name="price"
-                type="text"
+                type="number"
                 placeholder="Price"
-                onChange={handleNumericChange}
+                onChange={handleChange}
                 value={formData.price}
               />
               {errors.price && (
@@ -210,10 +269,11 @@ export function AddGameModal() {
               <Input
                 id="score"
                 name="score"
-                type="text"
+                type="number"
                 placeholder="Score"
-                onChange={handleNumericChange}
+                onChange={handleChange}
                 value={formData.score}
+                max={100}
               />
               {errors.score && (
                 <p className="text-sm text-red-500">{errors.score}</p>
@@ -246,8 +306,11 @@ export function AddGameModal() {
               <p className="text-sm text-red-500">{errors.description}</p>
             )}
           </div>
-          <Button onClick={handleSubmit} disabled={createGame.isPending}>
-            {createGame.isPending ? "Adding..." : "Add Game"}
+          <Button
+            onClick={handleSubmit}
+            disabled={!isFormValid || isSubmitting}
+          >
+            {isSubmitting ? "Saving..." : "Add Game"}
           </Button>
         </div>
       </DialogContent>
