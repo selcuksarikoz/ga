@@ -79,12 +79,6 @@ export default function FiltersClient({ genres, developers }: any) {
     debouncedPush(filters);
   };
 
-  const onClear = (filters: any) => {
-    // immediate clear
-    setLocalFilters(filters);
-    pushFiltersToUrl(filters);
-  };
-
   return (
     // the dynamic FilterPanel will receive localFilters as a controlled value
     <FilterPanel

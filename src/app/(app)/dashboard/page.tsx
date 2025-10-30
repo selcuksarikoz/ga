@@ -97,8 +97,7 @@ export default async function DashboardPage({ searchParams }: Props) {
   const genres = Object.values(Genre);
 
   return (
-    <div className="p-6">
-      <h1 className="mb-4 text-2xl font-bold">Dashboard — Games</h1>
+    <div className="h-screen p-6">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
         <div className="hidden md:col-span-1 md:block">
           <FiltersClient genres={genres} developers={developers} />

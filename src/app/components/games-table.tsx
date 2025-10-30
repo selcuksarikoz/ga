@@ -93,15 +93,15 @@ export function GamesTable({
   };
 
   return (
-    <div className="relative space-y-4 overflow-hidden rounded-md">
+    <div className="relative gap-2 rounded-md">
       {/* Overlay covers both the table and pagination and is centered */}
       {isLoading && (
-        <div className="absolute inset-0 z-40 flex items-center justify-center bg-white/50 backdrop-blur-sm">
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <Loading />
         </div>
       )}
 
-      <div className="rounded-md border">
+      <div className="overflow-auto rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
