@@ -27,8 +27,8 @@ const gameSchema = z.object({
   genre: z.nativeEnum(Genre),
   releaseYear: z.number(),
   developerId: z.string().min(1, "Developer is required"),
-  price: z.number().min(0, "Price cannot be negative"),
-  score: z
+  price: z.coerce.number().min(0, "Price cannot be negative"),
+  score: z.coerce
     .number()
     .min(0, "Score must be at least 0")
     .max(100, "Score must be 100 or less"),
@@ -37,25 +37,24 @@ const gameSchema = z.object({
 });
 
 export function AddGameModal() {
-  const { isOpen, type, closeModal } = useModal();
+  const { isOpen, closeModal } = useModal();
   const [formData, setFormData] = useState({
     title: "",
     genre: Genre.ACTION,
     releaseYear: new Date().getFullYear(),
     developerId: "",
-    price: undefined,
-    score: undefined,
+    price: "",
+    score: "",
     platforms: "",
     description: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const isModalOpen = isOpen && type === "add-game";
 
   const { data: developers } = api.developers.list.useQuery();
   const utils = api.useUtils();
   const createGame = api.game.create.useMutation({
     onSuccess: () => {
-      utils.game.list.invalidate();
+      utils.game.list.refetch();
       closeModal();
     },
   });
@@ -65,6 +64,14 @@ export function AddGameModal() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle numeric inputs separately to allow empty string
+  const handleNumericChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (/^\d*\.?\d*$/.test(value)) {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSelectChange = (name: string, value: string | number) => {
@@ -91,7 +98,7 @@ export function AddGameModal() {
   };
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={closeModal}>
+    <Dialog open={isOpen} onOpenChange={closeModal}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Game</DialogTitle>
@@ -189,9 +196,9 @@ export function AddGameModal() {
               <Input
                 id="price"
                 name="price"
-                type="number"
+                type="text"
                 placeholder="Price"
-                onChange={handleChange}
+                onChange={handleNumericChange}
                 value={formData.price}
               />
               {errors.price && (
@@ -203,9 +210,9 @@ export function AddGameModal() {
               <Input
                 id="score"
                 name="score"
-                type="number"
+                type="text"
                 placeholder="Score"
-                onChange={handleChange}
+                onChange={handleNumericChange}
                 value={formData.score}
               />
               {errors.score && (

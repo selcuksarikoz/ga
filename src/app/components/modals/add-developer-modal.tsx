@@ -14,14 +14,13 @@ import { Button } from "@/app/components/ui/button";
 import { Label } from "@/app/components/ui/label";
 
 export function AddDeveloperModal() {
-  const { isOpen, type, closeModal } = useModal();
+  const { isOpen, closeModal } = useModal();
   const [name, setName] = useState("");
-  const isModalOpen = isOpen && type === "add-developer";
 
   const utils = api.useUtils();
   const createDeveloper = api.developers.create.useMutation({
     onSuccess: () => {
-      utils.developers.list.invalidate();
+      utils.developers.list.refetch();
       closeModal();
     },
   });
@@ -31,7 +30,7 @@ export function AddDeveloperModal() {
   };
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={closeModal}>
+    <Dialog open={isOpen} onOpenChange={closeModal}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Developer</DialogTitle>

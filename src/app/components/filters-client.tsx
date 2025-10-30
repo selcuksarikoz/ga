@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import debounce from "@/lib/debounce";
 
+// the filter panel will be loaded dynamically and will not be rendered on the server side.
 const FilterPanel = dynamic(
   () => import("./filter-panel").then((m) => m.FilterPanel),
   {
@@ -80,7 +81,6 @@ export default function FiltersClient({ genres, developers }: any) {
   };
 
   return (
-    // the dynamic FilterPanel will receive localFilters as a controlled value
     <FilterPanel
       filters={localFilters}
       onFiltersChange={onFiltersChange}
