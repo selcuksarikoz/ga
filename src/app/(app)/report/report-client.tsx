@@ -33,7 +33,8 @@ export default function ReportClient() {
   );
 
   const handleGenerateReport = (newYearA: number, newYearB: number) => {
-    const url = new URL(window.location.toString());
+    // safe to use `location` here because this is a client component
+    const url = new URL(location.href);
     url.searchParams.set("yearA", String(newYearA));
     url.searchParams.set("yearB", String(newYearB));
     router.push(url.pathname + url.search);

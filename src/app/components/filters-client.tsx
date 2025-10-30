@@ -40,7 +40,8 @@ export default function FiltersClient({ genres, developers }: any) {
 
   const pushFiltersToUrl = useCallback(
     (filters: any) => {
-      const url = new URL(window.location.toString());
+      // safe to use `location` here because this component is a client component
+      const url = new URL(location.href);
       if (filters.developer) {
         url.searchParams.set("developerId", filters.developer);
       } else {

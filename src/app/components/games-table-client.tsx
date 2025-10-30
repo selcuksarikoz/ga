@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { GamesTable } from "./games-table";
 import { deleteGameAction } from "@/app/actions/game.actions";
@@ -16,29 +16,36 @@ export default function GamesTableClient({
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  const url = new URL(window.location.toString());
+  // Next.js 15+ safe: build URL from pathname and searchParams
+  const pathname = usePathname();
+  const getUrlWithParams = (params: URLSearchParams) =>
+    `${pathname}?${params.toString()}`;
 
   const onPageChange = (page: number) => {
-    url.searchParams.set("page", String(page));
-    startTransition(() => router.push(url.pathname + url.search));
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    params.set("page", String(page));
+    startTransition(() => router.push(getUrlWithParams(params)));
   };
 
   const onDeleteGame = async (id: string) => {
     await deleteGameAction(id);
     toast.success("Game deleted successfully");
-    startTransition(() => router.push(url.pathname + url.search));
+    // keep current page after delete
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    startTransition(() => router.push(getUrlWithParams(params)));
   };
 
   const onSort = (column: string) => {
-    const current = searchParams.get("sortBy");
-    const currentOrder = searchParams.get("sortOrder") || "desc";
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    const current = params.get("sortBy");
+    const currentOrder = params.get("sortOrder") || "desc";
     let nextOrder = "asc";
     if (current === column) nextOrder = currentOrder === "asc" ? "desc" : "asc";
-    url.searchParams.set("sortBy", column);
-    url.searchParams.set("sortOrder", nextOrder);
+    params.set("sortBy", column);
+    params.set("sortOrder", nextOrder);
     // reset to first page when sorting changes
-    url.searchParams.set("page", "1");
-    startTransition(() => router.push(url.pathname + url.search));
+    params.set("page", "1");
+    startTransition(() => router.push(getUrlWithParams(params)));
   };
 
   return (
