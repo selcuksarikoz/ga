@@ -1,29 +1,31 @@
-# Create T3 App
+# Game List Management Application
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+## Overview
 
-## What's next? How do I make an app with this?
+- [x] Built with Next.js, tRPC, Prisma, and MongoDB
+- [x] Uses Zod for input validation
+- [x] Displays a list of games in a paginated and sortable table
+- [x] Handles large data efficiently with server-side filtering and sorting
+- [x] API endpoints created with tRPC for type-safe communication
+- [x] New game submissions supported, including dynamic developer creation if they do not exist
+- [x] Data seeded with at least 1000 mock entries using Prisma seed
+- [x] URL query parameters support filter and sort states for shareability
+- [x] Project deployed on Vercel and source code available on GitHub
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## Setup Instructions
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+- [x] Clone the repository
+- [x] Run `npm install` or `yarn install` to install dependencies
+- [x] Create `.env` file and add your MongoDB connection string
+- [x] Execute `npx prisma migrate dev` to create database schema
+- [x] Seed the database with `npx prisma db seed`
+- [x] Run development server with `npm run dev` or `yarn dev`
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+## Optional / Future Improvements
 
-## Learn More
+- [ ] Authentication and role-based access with NextAuth
+- [ ] Comprehensive test coverage for backend and frontend
+- [ ] UI enhancements for better user experience
+- [ ] Performance improvements and caching strategies for detail pages and endpoints
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+---
