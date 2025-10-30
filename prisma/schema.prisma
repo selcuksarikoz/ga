@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+}
+
+// npx prisma generate
+// npx prisma db push
+// npx prisma db seed
+
+// Necessary for Next auth
+// Auth models
+model Account {
+    id                       String  @id @default(auto()) @map("_id") @db.ObjectId
+    userId                   String  @db.ObjectId
+    type                     String
+    provider                 String
+    providerAccountId        String
+    refresh_token            String? // @db.Text
+    access_token             String? // @db.Text
+    expires_at               Int?
+    token_type               String?
+    scope                    String?
+    id_token                 String? // @db.Text
+    session_state            String?
+    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    refresh_token_expires_in Int?
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(auto()) @map("_id") @db.ObjectId
+    sessionToken String   @unique
+    userId       String   @db.ObjectId
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+    id            String    @id @default(auto()) @map("_id") @db.ObjectId
+    name          String?
+    email         String?   @unique
+    emailVerified DateTime?
+    image         String?
+    accounts      Account[]
+    sessions      Session[]
+}
+
+// Auth models done
+
+// Game and Developer models
+enum Genre {
+    ACTION
+    ADVENTURE
+    RPG
+    STRATEGY
+    SIMULATION
+    SPORTS
+    RACING
+    PUZZLE
+    FIGHTING
+    PLATFORMER
+    SHOOTER
+    HORROR
+    MMORPG
+    BATTLE_ROYALE
+    ROGUELIKE
+    INDIE
+    SURVIVAL
+    OPEN_WORLD
+}
+
+model Developer {
+    id    String @id @default(auto()) @map("_id") @db.ObjectId
+    name  String
+    games Game[] @relation("DeveloperGames")
+}
+
+model Game {
+    id          String    @id @default(auto()) @map("_id") @db.ObjectId
+    title       String
+    genre       Genre     @default(ADVENTURE)
+    releaseDate DateTime?
+    developer   Developer @relation("DeveloperGames", fields: [developerId], references: [id])
+    developerId String    @db.ObjectId
+
+    releaseYear Int
+    price       Float
+    score       Float
+    platforms   String // Stored as comma-separated values
+    description String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@index([genre])
+    @@index([releaseYear])
+    @@index([developerId])
+}
+
+// Game and Developer models done
