@@ -18,43 +18,41 @@ export default async function GameDetailPage(props: { params: any }) {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>{game.title}</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          <div>
-            <strong>Developer:</strong> {game.developer.name}
+    <Card>
+      <CardHeader>
+        <CardTitle>{game.title}</CardTitle>
+      </CardHeader>
+      <CardContent className="grid gap-4">
+        <div>
+          <strong>Developer:</strong> {game.developer.name}
+        </div>
+        <div>
+          <strong>Genre:</strong> <Badge>{game.genre}</Badge>
+        </div>
+        <div>
+          <strong>Release Year:</strong> {game.releaseYear}
+        </div>
+        <div>
+          <strong>Price:</strong> ${game.price.toFixed(2)}
+        </div>
+        <div>
+          <strong>Score:</strong> {game.score}
+        </div>
+        <div>
+          <strong>Platforms:</strong>
+          <div className="flex flex-wrap gap-2">
+            {game.platforms.split(",").map((platform) => (
+              <Badge key={platform} variant="secondary">
+                {platform.trim()}
+              </Badge>
+            ))}
           </div>
-          <div>
-            <strong>Genre:</strong> <Badge>{game.genre}</Badge>
-          </div>
-          <div>
-            <strong>Release Year:</strong> {game.releaseYear}
-          </div>
-          <div>
-            <strong>Price:</strong> ${game.price.toFixed(2)}
-          </div>
-          <div>
-            <strong>Score:</strong> {game.score}
-          </div>
-          <div>
-            <strong>Platforms:</strong>
-            <div className="flex flex-wrap gap-2">
-              {game.platforms.split(",").map((platform) => (
-                <Badge key={platform} variant="secondary">
-                  {platform.trim()}
-                </Badge>
-              ))}
-            </div>
-          </div>
-          <div>
-            <strong>Description:</strong>
-            <p>{game.description}</p>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+        <div>
+          <strong>Description:</strong>
+          <p>{game.description}</p>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

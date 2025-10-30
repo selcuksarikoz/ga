@@ -88,7 +88,7 @@ export default async function DashboardPage(props: { searchParams: any }) {
   const genres = Object.values(Genre);
 
   return (
-    <div className="container mx-auto p-4">
+    <>
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Game Dashboard</h1>
         <ActionButtons />
@@ -106,6 +106,6 @@ export default async function DashboardPage(props: { searchParams: any }) {
           />
         </div>
       </div>
-    </div>
+    </>
   );
 }

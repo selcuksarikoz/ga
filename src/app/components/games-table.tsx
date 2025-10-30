@@ -163,6 +163,7 @@ export function GamesTable({
                 />
               </TableHead>
               <TableHead>Platforms</TableHead>
+              <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
