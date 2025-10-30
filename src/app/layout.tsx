@@ -5,6 +5,8 @@ import { Geist } from "next/font/google";
 
 import clsx from "clsx";
 import { TRPCReactProvider } from "@/trpc/react";
+import { ModalProvider } from "@/components/modal-provider";
+import { ModalRenderer } from "./components/modal-renderer";
 
 export const metadata: Metadata = {
   title: "Game App",
@@ -23,7 +25,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={clsx("dark", geist.variable)}>
       <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          <ModalProvider>
+            {children}
+            <ModalRenderer />
+          </ModalProvider>
+        </TRPCReactProvider>
       </body>
     </html>
   );

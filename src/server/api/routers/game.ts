@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Prisma } from "@prisma/client";
+import { Prisma, Genre } from "@prisma/client";
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
@@ -195,6 +195,31 @@ export const gameRouter = createTRPCRouter({
       return report;
     }),
   //report done
+
+  // create a game
+  create: protectedProcedure
+    .input(
+      z.object({
+        title: z.string(),
+        genre: z.nativeEnum(Genre),
+        releaseDate: z.date(),
+        developerId: z.string(),
+        price: z.number(),
+        score: z.number(),
+        platforms: z.string(),
+        description: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const game = await ctx.db.game.create({
+        data: {
+          ...input,
+          releaseYear: input.releaseDate.getFullYear(),
+        },
+      });
+      return game;
+    }),
+  // create a game done
 });
 
 export default gameRouter;

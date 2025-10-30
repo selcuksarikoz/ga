@@ -2,6 +2,7 @@ import { caller } from "@/trpc/server";
 import FiltersClient from "@/app/components/filters-client";
 import GamesTableClient from "@/app/components/games-table-client";
 import { Prisma, Genre } from "@prisma/client";
+import { ActionButtons } from "@/app/components/action-buttons";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -97,7 +98,11 @@ export default async function DashboardPage({ searchParams }: Props) {
   const genres = Object.values(Genre);
 
   return (
-    <div className="h-screen p-6">
+    <div className="container mx-auto p-4">
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Game Dashboard</h1>
+        <ActionButtons />
+      </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
         <div className="hidden md:col-span-1 md:block">
           <FiltersClient genres={genres} developers={developers} />
