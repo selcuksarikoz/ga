@@ -91,8 +91,9 @@ export function GamesTable({
     if (score >= 60) return "text-yellow-600";
     return "text-red-600";
   };
+
   return (
-    <div className="relative overflow-hidden rounded-md">
+    <div className="relative space-y-4 overflow-hidden rounded-md">
       {/* Overlay covers both the table and pagination and is centered */}
       {isLoading && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-white/50 backdrop-blur-sm">
@@ -205,7 +206,7 @@ export function GamesTable({
         </Table>
       </div>
 
-      <div className="flex items-center justify-between px-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-2">
         <div className="text-muted-foreground text-sm">
           Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
           {Math.min(pagination.page * pagination.limit, pagination.total)} of{" "}

@@ -39,7 +39,6 @@ export interface Filters {
   priceMax: number;
   scoreMin: number;
   scoreMax: number;
-  platform: string;
 }
 
 interface DeveloperOption {
@@ -52,7 +51,6 @@ interface FilterPanelProps {
   onFiltersChange: (filters: Filters) => void;
   genres: string[];
   developers: DeveloperOption[];
-  platforms: string[];
 }
 
 export function FilterPanel({
@@ -60,7 +58,6 @@ export function FilterPanel({
   onFiltersChange,
   genres,
   developers,
-  platforms,
 }: FilterPanelProps) {
   const ALL_OPTION = "all";
 
@@ -79,7 +76,6 @@ export function FilterPanel({
       priceMax: 70,
       scoreMin: 0,
       scoreMax: 100,
-      platform: "",
     });
   };
 
@@ -87,7 +83,6 @@ export function FilterPanel({
     filters.search,
     filters.genre,
     filters.developer,
-    filters.platform,
   ].filter(Boolean).length;
 
   const FilterContent = (
@@ -170,27 +165,7 @@ export function FilterPanel({
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label>Platform</Label>
-          <Select
-            value={filters.platform || ALL_OPTION}
-            onValueChange={(v: string) =>
-              updateFilter("platform", v === ALL_OPTION ? "" : v)
-            }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="All platforms" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL_OPTION}>All platforms</SelectItem>
-              {platforms.map((platform) => (
-                <SelectItem key={platform} value={platform}>
-                  {platform}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {/* platform filter removed */}
 
         <Separator />
 

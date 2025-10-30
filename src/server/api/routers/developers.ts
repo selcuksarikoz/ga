@@ -1,8 +1,8 @@
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
 export const developersRouter = createTRPCRouter({
   // list developers
-  list: publicProcedure.query(async ({ ctx }) => {
+  list: protectedProcedure.query(async ({ ctx }) => {
     const devs = await ctx.db.developer.findMany({
       select: { id: true, name: true },
     });

@@ -12,7 +12,7 @@ const FilterPanel = dynamic(
   },
 );
 
-export default function FiltersClient({ genres, developers, platforms }: any) {
+export default function FiltersClient({ genres, developers }: any) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -27,7 +27,6 @@ export default function FiltersClient({ genres, developers, platforms }: any) {
       priceMax: Number(searchParams.get("priceMax") ?? 100),
       scoreMin: Number(searchParams.get("scoreMin") ?? 0),
       scoreMax: Number(searchParams.get("scoreMax") ?? 100),
-      platform: searchParams.get("platform") ?? "",
     };
   }, [searchParams]);
 
@@ -59,9 +58,7 @@ export default function FiltersClient({ genres, developers, platforms }: any) {
       url.searchParams.set("scoreMin", String(filters.scoreMin));
       url.searchParams.set("scoreMax", String(filters.scoreMax));
 
-      if (filters.platform)
-        url.searchParams.set("platform", String(filters.platform));
-      else url.searchParams.delete("platform");
+      // platform filter removed
 
       // reset to page 1 when filters change
       url.searchParams.set("page", "1");
@@ -95,7 +92,6 @@ export default function FiltersClient({ genres, developers, platforms }: any) {
       onFiltersChange={onFiltersChange}
       genres={genres}
       developers={developers}
-      platforms={platforms}
     />
   );
 }

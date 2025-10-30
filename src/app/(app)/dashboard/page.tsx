@@ -1,6 +1,7 @@
 import { caller } from "@/trpc/server";
 import FiltersClient from "@/app/components/filters-client";
 import GamesTableClient from "@/app/components/games-table-client";
+import { Prisma, Genre } from "@prisma/client";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -35,6 +36,22 @@ export default async function DashboardPage({ searchParams }: Props) {
   const priceMax = searchParams.priceMax
     ? Number(searchParams.priceMax)
     : undefined;
+  const genre =
+    typeof searchParams.genre === "string" ? searchParams.genre : undefined;
+  const yearMin = searchParams.yearMin
+    ? Number(searchParams.yearMin)
+    : undefined;
+  const yearMax = searchParams.yearMax
+    ? Number(searchParams.yearMax)
+    : undefined;
+  const scoreMin = searchParams.scoreMin
+    ? Number(searchParams.scoreMin)
+    : undefined;
+  const scoreMax = searchParams.scoreMax
+    ? Number(searchParams.scoreMax)
+    : undefined;
+  const search =
+    typeof searchParams.search === "string" ? searchParams.search : undefined;
 
   // fetch developers for filter options
   const developers = await caller.developers.list();
@@ -47,6 +64,12 @@ export default async function DashboardPage({ searchParams }: Props) {
     releaseYear,
     priceMin,
     priceMax,
+    genre,
+    yearMin,
+    yearMax,
+    scoreMin,
+    scoreMax,
+    search,
     sortBy,
     sortOrder,
   });
@@ -68,17 +91,19 @@ export default async function DashboardPage({ searchParams }: Props) {
     priceMax: priceMax ?? 100,
     scoreMin: 0,
     scoreMax: 100,
-    platform: "",
   };
+
+  // derive genres from Prisma enum so the list always matches the schema
+  const genres = Object.values(Genre);
 
   return (
     <div className="p-6">
       <h1 className="mb-4 text-2xl font-bold">Dashboard — Games</h1>
-      <div className="grid grid-cols-4 gap-6">
-        <div className="col-span-1">
-          <FiltersClient genres={[]} developers={developers} platforms={[]} />
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+        <div className="hidden md:col-span-1 md:block">
+          <FiltersClient genres={genres} developers={developers} />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-1 md:col-span-3">
           <GamesTableClient
             games={games}
             pagination={res.pagination}

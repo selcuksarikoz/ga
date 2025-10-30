@@ -1,11 +1,11 @@
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
 
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
 export const gameRouter = createTRPCRouter({
   // get a game by id
-  get: publicProcedure
+  get: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {
       const game = await ctx.db.game.findUnique({
@@ -16,9 +16,15 @@ export const gameRouter = createTRPCRouter({
     }),
   // get a game by id done
   // list games with filters and pagination
-  list: publicProcedure
+  list: protectedProcedure
     .input(
       z.object({
+        genre: z.string().optional(),
+        yearMin: z.number().optional(),
+        yearMax: z.number().optional(),
+        scoreMin: z.number().optional(),
+        scoreMax: z.number().optional(),
+        search: z.string().optional(),
         developerId: z.string().optional(),
         releaseYear: z.number().optional(),
         priceMin: z.number().optional(),
@@ -33,6 +39,12 @@ export const gameRouter = createTRPCRouter({
     )
     .query(async ({ input, ctx }) => {
       const schema = z.object({
+        genre: z.string().optional(),
+        yearMin: z.number().optional(),
+        yearMax: z.number().optional(),
+        scoreMin: z.number().optional(),
+        scoreMax: z.number().optional(),
+        search: z.string().optional(),
         developerId: z.string().optional(),
         releaseYear: z.number().optional(),
         priceMin: z.number().optional(),
@@ -48,6 +60,12 @@ export const gameRouter = createTRPCRouter({
       const parsed = schema.parse(input);
 
       const {
+        genre,
+        yearMin,
+        yearMax,
+        scoreMin,
+        scoreMax,
+        search,
         developerId,
         releaseYear,
         priceMin,
@@ -57,15 +75,49 @@ export const gameRouter = createTRPCRouter({
         sortBy,
         sortOrder,
       } = parsed;
+      const where: Prisma.GameWhereInput & {
+        price?: Prisma.FloatFilter;
+        score?: Prisma.FloatFilter;
+        releaseYear?: Prisma.IntFilter;
+        title?: Prisma.StringFilter;
+      } = {};
 
-      const where: Prisma.GameWhereInput & { price?: Prisma.FloatFilter } = {};
       if (developerId) where.developerId = developerId;
+
+      // exact releaseYear takes precedence over range
       if (releaseYear !== undefined) where.releaseYear = releaseYear;
+      else if (yearMin !== undefined || yearMax !== undefined) {
+        const yearFilter: Prisma.IntFilter = {} as Prisma.IntFilter;
+        if (yearMin !== undefined) yearFilter.gte = yearMin;
+        if (yearMax !== undefined) yearFilter.lte = yearMax;
+        where.releaseYear = yearFilter;
+      }
+
       if (priceMin !== undefined || priceMax !== undefined) {
         const priceFilter: Prisma.FloatFilter = {} as Prisma.FloatFilter;
         if (priceMin !== undefined) priceFilter.gte = priceMin;
         if (priceMax !== undefined) priceFilter.lte = priceMax;
         where.price = priceFilter;
+      }
+
+      if (scoreMin !== undefined || scoreMax !== undefined) {
+        const scoreFilter: Prisma.FloatFilter = {} as Prisma.FloatFilter;
+        if (scoreMin !== undefined) scoreFilter.gte = scoreMin;
+        if (scoreMax !== undefined) scoreFilter.lte = scoreMax;
+        where.score = scoreFilter;
+      }
+
+      if (genre) {
+        // Prisma expects the enum value; passing the string works at runtime
+        // but we cast the type for TypeScript compatibility
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        where.genre = genre as any;
+      }
+
+      if (search) {
+        // case-insensitive contains on title
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        where.title = { contains: search, mode: "insensitive" } as any;
       }
 
       const total = await ctx.db.game.count({ where });
