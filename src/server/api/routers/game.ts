@@ -148,6 +148,53 @@ export const gameRouter = createTRPCRouter({
       };
     }),
   // list games with filters and pagination done
+
+  //report
+  report: protectedProcedure
+    .input(
+      z.object({
+        yearA: z.number(),
+        yearB: z.number(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const { yearA, yearB } = input;
+      const minYear = Math.min(yearA, yearB);
+      const maxYear = Math.max(yearA, yearB);
+
+      const result = await ctx.db.game.groupBy({
+        by: ["genre"],
+        where: {
+          releaseYear: {
+            gte: minYear,
+            lte: maxYear,
+          },
+        },
+        _count: {
+          id: true,
+        },
+        _avg: {
+          price: true,
+        },
+        _max: {
+          score: true,
+        },
+        _min: {
+          score: true,
+        },
+      });
+
+      const report = result.map((r) => ({
+        genre: r.genre,
+        gameCount: r._count.id,
+        averagePrice: r._avg.price,
+        highestScore: r._max.score,
+        lowestScore: r._min.score,
+      }));
+
+      return report;
+    }),
+  //report done
 });
 
 export default gameRouter;

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
 import {
@@ -9,12 +10,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/components/ui/select";
-import { Slider } from "@/app/components/ui/slider";
 import { Button } from "@/app/components/ui/button";
 import { Badge } from "@/app/components/ui/badge";
 import { Search, X, Filter } from "lucide-react";
 import { Separator } from "@/app/components/ui/separator";
 import { CardHeader, CardContent, CardTitle } from "@/app/components/ui/card";
+import { ReportFilter } from "@/app/components/report-filter";
 
 export interface Filters {
   search: string;
@@ -46,6 +47,7 @@ export default function FilterContent({
   genres,
   developers,
 }: FilterContentProps) {
+  const router = useRouter();
   const ALL_OPTION = "all";
 
   const updateFilter = (key: keyof Filters, value: string | number) => {
@@ -71,6 +73,10 @@ export default function FilterContent({
     filters.genre,
     filters.developer,
   ].filter(Boolean).length;
+
+  const handleGoToReport = (yearA: number, yearB: number) => {
+    router.push(`/report?yearA=${yearA}&yearB=${yearB}`);
+  };
 
   return (
     <>
@@ -154,56 +160,7 @@ export default function FilterContent({
 
         <Separator />
 
-        <div className="space-y-4">
-          <Label>
-            Release Year: {filters.yearMin} - {filters.yearMax}
-          </Label>
-          <Slider
-            min={2010}
-            max={2024}
-            step={1}
-            value={[filters.yearMin, filters.yearMax]}
-            onValueChange={([min, max]: [number, number]) => {
-              updateFilter("yearMin", min);
-              updateFilter("yearMax", max);
-            }}
-            className="mt-2"
-          />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <Label>
-            Price: ${filters.priceMin} - ${filters.priceMax}
-          </Label>
-          <Slider
-            min={0}
-            max={70}
-            step={5}
-            value={[filters.priceMin, filters.priceMax]}
-            onValueChange={([min, max]: [number, number]) => {
-              updateFilter("priceMin", min);
-              updateFilter("priceMax", max);
-            }}
-            className="mt-2"
-          />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <Label>
-            Score: {filters.scoreMin} - {filters.scoreMax}
-          </Label>
-          <Slider
-            min={0}
-            max={100}
-            step={5}
-            value={[filters.scoreMin, filters.scoreMax]}
-            onValueChange={([min, max]: [number, number]) => {
-              updateFilter("scoreMin", min);
-              updateFilter("scoreMax", max);
-            }}
-            className="mt-2"
-          />
-        </div>
+        <ReportFilter onSubmit={handleGoToReport} buttonLabel="Get Report" />
       </CardContent>
     </>
   );

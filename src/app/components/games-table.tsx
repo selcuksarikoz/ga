@@ -11,7 +11,8 @@ import {
 } from "@/app/components/ui/table";
 import { Badge } from "@/app/components/ui/badge";
 import { Button } from "@/app/components/ui/button";
-import { ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
+import { PaginationClient } from "./pagination-client";
 import { cn } from "@/lib/utils";
 import Loading from "@/app/components/ui/loading";
 
@@ -93,7 +94,7 @@ export function GamesTable({
   };
 
   return (
-    <div className="relative gap-2 rounded-md">
+    <div className="relative flex flex-col gap-2 rounded-md">
       {/* Overlay covers both the table and pagination and is centered */}
       {isLoading && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -206,36 +207,7 @@ export function GamesTable({
         </Table>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 px-2">
-        <div className="text-muted-foreground text-sm">
-          Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
-          {Math.min(pagination.page * pagination.limit, pagination.total)} of{" "}
-          {pagination.total} games
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pagination.page - 1)}
-            disabled={pagination.page === 1}
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Previous
-          </Button>
-          <div className="text-sm font-medium">
-            Page {pagination.page} of {pagination.totalPages}
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pagination.page + 1)}
-            disabled={pagination.page === pagination.totalPages}
-          >
-            Next
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      <PaginationClient pagination={pagination} onPageChange={onPageChange} />
     </div>
   );
 }
