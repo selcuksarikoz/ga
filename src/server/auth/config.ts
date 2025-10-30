@@ -52,15 +52,15 @@ export const authConfig = {
         id: user.id,
       },
     }),
-    // redirect({ url, baseUrl }) {
-    //   // // Allows relative callback URLs
-    //   // if (url.startsWith("/")) return `${baseUrl}${url}`;
+    redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
 
-    //   // // if same origin, redirect to url
-    //   // if (new URL(url).origin === baseUrl) return url;
+      // if same origin, redirect to url
+      if (new URL(url).origin === baseUrl) return url;
 
-    //   // // else redirect to baseUrl
-    //   // return `${baseUrl}/dashboard`;
-    // },
+      // else redirect to baseUrl
+      return `${baseUrl}/dashboard`;
+    },
   },
 } satisfies NextAuthConfig;
