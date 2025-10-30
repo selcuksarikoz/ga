@@ -18,16 +18,3 @@ export async function createDeveloperAction(name: string) {
     return { data: null, error: "Failed to create developer." };
   }
 }
-
-/**
- * Server Action to create a developer from the dedicated developer modal.
- * @param name The name of the new developer.
- */
-export async function createJustDeveloperAction(name: string) {
-  try {
-    await caller.developers.create({ name });
-    revalidatePath("/dashboard");
-  } catch (error) {
-    return { error: "Failed to create developer." };
-  }
-}

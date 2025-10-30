@@ -10,7 +10,7 @@ import {
 } from "@/app/components/ui/dialog";
 import { Input } from "@/app/components/ui/input";
 import { Button } from "@/app/components/ui/button";
-import { createJustDeveloperAction } from "@/app/actions/developer.actions";
+import { createDeveloperAction } from "@/app/actions/developer.actions";
 import { Label } from "@/app/components/ui/label";
 import { toast } from "sonner";
 
@@ -21,7 +21,7 @@ export function AddDeveloperModal() {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    await createJustDeveloperAction(name);
+    await createDeveloperAction(name);
     toast.success("Developer added successfully");
     closeModal();
   };

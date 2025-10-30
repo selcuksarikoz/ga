@@ -1,4 +1,3 @@
-import { ActionButtons } from "@/app/components/action-buttons";
 import FiltersClient from "@/app/components/filters-client";
 import GamesTableClient from "@/app/components/games-table-client";
 import { caller } from "@/trpc/server";
@@ -88,24 +87,18 @@ export default async function DashboardPage(props: { searchParams: any }) {
   const genres = Object.values(Genre);
 
   return (
-    <>
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Game Dashboard</h1>
-        <ActionButtons />
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+      <div className="hidden md:col-span-1 md:block">
+        <FiltersClient genres={genres} developers={developers} />
       </div>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
-        <div className="hidden md:col-span-1 md:block">
-          <FiltersClient genres={genres} developers={developers} />
-        </div>
-        <div className="col-span-1 md:col-span-3">
-          <GamesTableClient
-            games={games}
-            pagination={res.pagination}
-            sortBy={sortBy ?? "title"}
-            sortOrder={sortOrder ?? "asc"}
-          />
-        </div>
+      <div className="col-span-1 md:col-span-3">
+        <GamesTableClient
+          games={games}
+          pagination={res.pagination}
+          sortBy={sortBy ?? "title"}
+          sortOrder={sortOrder ?? "asc"}
+        />
       </div>
-    </>
+    </div>
   );
 }

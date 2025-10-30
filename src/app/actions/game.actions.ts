@@ -26,6 +26,7 @@ export async function createGameAction(formData: {
     // Revalidate the dashboard path to refresh the game list.
     // Since it's a single page, I put revalidatePath here. I could have done it on the page where I called the action with the async/promise structure.
     revalidatePath("/dashboard");
+    return { message: "Game created successfully." };
   } catch (error) {
     return { error: "Failed to create game." };
   }

@@ -1,11 +1,15 @@
 import { z } from "zod";
 import { type Prisma, Genre } from "@prisma/client";
 
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 
 export const gameRouter = createTRPCRouter({
   // get a game by id
-  get: protectedProcedure
+  get: publicProcedure // for demo purposes, make it public
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {
       const game = await ctx.db.game.findUnique({

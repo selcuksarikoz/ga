@@ -1,16 +1,24 @@
-// import { auth } from "@/server/auth";
-// import { redirect } from "next/navigation";
+import { ActionButtons } from "@/app/components/action-buttons";
+import { auth } from "@/server/auth";
+import { redirect } from "next/navigation";
 
-export default function AppLayout({
+export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // i had to disable, oauth2 doesnt work very well on the production
-  // const session = await auth();
-  // if (!session) {
-  //   redirect("/");
-  // }
+  const session = await auth();
+  if (!session) {
+    redirect("/");
+  }
 
-  return <div className="container-fluid mx-auto p-4">{children}</div>;
+  return (
+    <div className="container-fluid mx-auto p-4">
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Game Dashboard</h1>
+        <ActionButtons />
+      </div>
+      {children}
+    </div>
+  );
 }
