@@ -1,4 +1,6 @@
 import React from "react";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 import { caller } from "@/trpc/server";
 import { Badge } from "@/app/components/ui/badge";
 import {
@@ -18,8 +20,14 @@ export default async function GameDetailPage(props: { params: any }) {
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="container mx-auto mt-2">
+      <CardHeader className="flex flex-row items-center gap-2">
+        <Link
+          href="/dashboard"
+          className="text-muted-foreground hover:text-primary mr-2 flex items-center transition-colors"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </Link>
         <CardTitle>{game.title}</CardTitle>
       </CardHeader>
       <CardContent className="grid gap-4">
